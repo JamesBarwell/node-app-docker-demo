@@ -1,0 +1,29 @@
+{
+  "name": "node-app-sample",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sample node app for educational purposes",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.16.2"
+  },
+  "devDependencies": {
+    "eslint": "^6.2.2",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.18.2",
+    "mocha": "^5.0.0",
+    "nyc": "^14.1.1",
+    "sinon": "^4.2.2",
+    "supertest": "^3.0.0"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "test": "mocha",
+    "test-watch": "mocha- w",
+    "lint": "eslint .",
+    "lint-fix": "eslint --fix .",
+    "coverage": "nyc npm test"
+  },
+  "author": "James Barwell <jb@jamesbarwell.co.uk>",
+  "license": "MIT"
+}
