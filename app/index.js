@@ -1,12 +1,12 @@
+const App = require('./src/app');
 const ApiSource = require('./src/source/api');
 
 const apiSource = ApiSource();
-
-const App = require('./src/App')(
+const app = App(
     apiSource,
 );
 
 const httpPort = 8080;
-App.listen(httpPort, () => {
+app.listen(httpPort, () => {
     console.log(`http.listen: ${httpPort}`);
 });
