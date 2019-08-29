@@ -1,5 +1,5 @@
 {
-  "name": "node-app-sample",
+  "name": "node-app-docker-demo",
   "version": "1.0.0",
   "private": true,
   "description": "Sample node app for educational purposes",
