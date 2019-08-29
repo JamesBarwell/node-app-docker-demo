@@ -1,4 +1,4 @@
-Node App Sample
+Node App Docker Demo
 ---
 
 An example app to demonstrate some concepts and best practices:
