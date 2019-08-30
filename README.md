@@ -12,11 +12,15 @@ An example app to demonstrate some concepts and best practices:
 
 ## Explanation of the core concepts
 
-### Double DI
+### Double dependency-injection
 
-This pattern allows for a nearly full integration test approach to testing, with great performance, by only mocking the outermost extremities of the application. This means that the testing can occur at an HTTP level, including the webserver, and assertions made against the HTTP responses. This pattern provides a clear separation of what is and what is not under test, and is a pragmatic approach to full integration testing without causing slow down.
+In this example, most modules export a function, which is invoked by passing the module dependencies. This 'module constructor' function typically returns an object representing the module's public interface. This allows for a simple dependency injection approach to modules, and a simple way of achieving scoping. It is fine to break this rule when dependency management or scoping isn't required - perhaps to return a class or just a simple function.
 
-In this example, the `index.js` is the bootstrap that gathers or instantiates external dependencies, then injects them into the `App.js` where the second layer of DI occurs. The bootstrap is kept relatively simple and declarative. Under test, only the bootstrap code needs to be repeated, and the app can be fully tested without internal modification or mocks.
+Typically when trying to test an application there is a trade-off between achieving full integration test coverage versus the poor performance of loading HTTP servers and databases. This often leads to slow tests, or large parts of the application being mocked out and therefore not properly tested.
+
+In this example, the application is constructed by doing two rounds of dependency construction and injection. The first occurs in a bootstrap, and the second in the core application. The idea behind this pattern is that the bootstrap constructs dependencies that will be mocked out under test, whereas the core application's DI will still take place under test. This means that it is possible to mock only the outermost extremities of the application - the inputs and outputs - and to treat the application as a blackbox. In practical terms, this makes it easy and fast to test at the HTTP level, sending fake requests at the real HTTP server, and asserting on the HTTP responses and data sources such as a database adaptor.
+
+In this example, the `index.js` is the bootstrap that gathers or instantiates external dependencies, then injects them into the `App.js` where the second layer of DI occurs. The bootstrap is kept relatively simple and declarative. Under test, only the bootstrap code needs to be repeated, and the core application is loaded and run as normal.
 
 ### Test approach
 
