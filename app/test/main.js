@@ -2,7 +2,7 @@ const assert = require('assert');
 const sinon = require('sinon');
 const request = require('supertest');
 
-const App = require('../src/App');
+const App = require('../src/app');
 
 function startApp(opts = {}) {
     const apiSource = opts.apiSource || {
