@@ -20,7 +20,9 @@ Typically when trying to test an application there is a trade-off between achiev
 
 In this example, the application is constructed by doing two rounds of dependency construction and injection. The first occurs in a bootstrap, and the second in the core application. The idea behind this pattern is that the bootstrap constructs dependencies that will be mocked out under test, whereas the core application's DI will still take place under test. This means that it is possible to mock only the outermost extremities of the application - the inputs and outputs - and to treat the application as a blackbox. In practical terms, this makes it easy and fast to test at the HTTP level, sending fake requests at the real HTTP server, and asserting on the HTTP responses and data sources such as a database adaptor.
 
-In this example, the `index.js` is the bootstrap that gathers or instantiates external dependencies, then injects them into the `App.js` where the second layer of DI occurs. The bootstrap is kept relatively simple and declarative. Under test, only the bootstrap code needs to be repeated, and the core application is loaded and run as normal.
+In this example, the `index.js` is the bootstrap that gathers or instantiates external dependencies, then injects them into the `app.js` where the second layer of DI occurs. The bootstrap is kept relatively simple and declarative. Under test, only the bootstrap code needs to be repeated, and the core application is loaded and run as normal.
+
+Using this approach, it is possible to quickly build up a good amount of behavioural test coverage of the application, which can often prove more valuable than individual unit tests. (Of course, unit tests could still be used in addition where appropriate.)
 
 ### Test approach
 
@@ -30,21 +32,33 @@ The tests are strictly split between the setup and assertion of each test. This 
 
 Using the official Docker image can be an easy way to run the application securely, and stay up to date with the latest platform features and security fixes.
 
+
 ### Multi-stage build or local node_modules
 
-There are two options for how dependencies are included in the project, depending on how you wish to manage depdencies.
+The docker build is carried out using a multi-stage build process. This effectively creates two container environments, where the first container is used as a temporary build environment, and the artefacts of that build are carried into the second container which will become the production artefact.
 
-The standard way of building is to copy in the node_modules from the host machine. This would be a good approach if you also wish to commit the node_modules into version control along with the rest of the code. This approach can be beneficial for applications, as it means there is no dependency on external package managers to create a build, and allows full audit and control of dependencies just the same as for the rest of the application code. A downside to this approach is that it is not easy to separate the dependencies that are required in production from those only needed in development, which can lead to a bloated container image.
+In a simple node application this may feel a bit over-the-top given that the only artefact required is the `node_modules` directory. But this is useful to demonstrate that a 'pure' production container can be created without any superfluous files, such as the `package.json` metadata files, or dev dependencies. Of course, we are still reliant on the NPM ecosystem and the quality of the dependencies we are pulling into our projects, and it is always worth trying to minimise reliance on these where sensible.
 
-The multi-stage build will pull in dependencies from NPM at build time. It can also be used if there are other packages or build artefacts that need to be created. The benefit of the multi-stage build is that everything apart from the required artefacts are discarded, so the production container image remains 'pure' and uncontaminated by unnecessary files.
+Another option which some prefer is to commit the `node_modules` directory directly into the codebase. This can be a very sensible approach so as to remove any dependency on the internet or NPM servers to run the application or its tooling. It also provides much better control of the dependencies, such as auditing, upgrades and rollback, because it treats dependencies the same as any other code in the application. One downside to this approach is that it is hard to distinguish the dev-dependencies from the prod-dependencies when creating the production container image, so the production image can become more bloated. Some developers will prefer to rely on the `package-lock.json` and to trust that NPM will always be available and won't ever favour this approach.
+
+If you do wish to do this, adjust the `.gitignore` and commit the `node_modules`. Then remove the first 'build' section of the Dockerfile, and in the second section, modify the `COPY` blocks to copy in the entire `app` directory.
+
+```
+WORKDIR /home/node/app
+COPY app .
+```
 
 ### Linter and code coverage
 
-In a weakly-typed language, the linter is essential to help find code quality issues. The code coverage can provide some clues as to areas of the code that may require additional test coverage.
+The linter will help with code-style enforcement, but more importantly it can discover bugs such as the use of undeclared variables. In a weakly-typed language this static checking is essential to help discover code quality issues.
+
+The code coverage can provide some clues as to areas of the code that may require additional test coverage.
 
 ### Makefile
 
 Provides an example of how the container should be built and run.
+
+The commands included here could perhaps remove the need for a proper CI tool in the early stages of a project. When CI is required, the commands can just be called by the CI tool, so the CI configuration does not require any special knowledge of how to build the project other than the name of the command.
 
 ## Misc
 
