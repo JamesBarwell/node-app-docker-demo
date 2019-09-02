@@ -3,7 +3,7 @@ FROM node:12.9.0-alpine
 EXPOSE 80
 
 WORKDIR /home/node/app
-COPY app/node_modules ./node_modules
+COPY app/node_modules node_modules
 COPY app/index.js .
 COPY app/src src
 

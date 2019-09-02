@@ -41,12 +41,8 @@ In a simple node application this may feel a bit over-the-top given that the onl
 
 Another option which some prefer is to commit the `node_modules` directory directly into the codebase. This can be a very sensible approach so as to remove any dependency on the internet or NPM servers to run the application or its tooling. It also provides much better control of the dependencies, such as auditing, upgrades and rollback, because it treats dependencies the same as any other code in the application. One downside to this approach is that it is hard to distinguish the dev-dependencies from the prod-dependencies when creating the production container image, so the production image can become more bloated. Some developers will prefer to rely on the `package-lock.json` and to trust that NPM will always be available and won't ever favour this approach.
 
-If you do wish to do this, adjust the `.gitignore` and commit the `node_modules`. Then remove the first 'build' section of the Dockerfile, and in the second section, modify the `COPY` blocks to copy in the entire `app` directory.
+If you do wish to do this, adjust the `.gitignore` and commit the `node_modules`. Then see the included `Dockerfile-node-modules` alternative Dockerfile.
 
-```
-WORKDIR /home/node/app
-COPY app .
-```
 
 ### Linter and code coverage
 
