@@ -32,3 +32,5 @@ lint:
 audit:
 	docker run --rm --init -v $(shell pwd)/app:${NODE_BASE_INSTALL_DIR} -w ${NODE_BASE_INSTALL_DIR} ${NODE_BASE_IMAGE} npm audit
 
+dev-env:
+	./tmux-env.sh
